@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => {
-  const base = process.env.GITHUB_ACTIONS ? "/dark-film-studio/" : "/";
+  const base = process.env.VITE_BASE_PATH || "/";
 
   return {
   base,
