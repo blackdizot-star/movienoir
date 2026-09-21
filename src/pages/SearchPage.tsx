@@ -58,7 +58,7 @@ const SkeletonRow = () => (
 const BrandedLoadingState = ({ label = "Loading…" }: { label?: string }) => (
   <div className="space-y-2 pb-4">
     <div className="flex flex-col items-center justify-center gap-2 py-4">
-      <img src="/logo-compact.png" alt="MovieNoir" className="h-12 w-12 animate-pulse rounded-xl" />
+      <img src={`${import.meta.env.BASE_URL}logo-compact.png`} alt="MovieNoir" className="h-12 w-12 animate-pulse rounded-xl" />
       <p className="text-[11px] uppercase tracking-[0.25em] text-white/50 font-semibold">{label}</p>
     </div>
     {Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)}
@@ -367,7 +367,7 @@ const SearchPage = () => {
               <BrandedLoadingState label="Searching" />
             ) : filtered.length === 0 ? (
               <div className="py-8 flex flex-col items-center text-center">
-                <img src="/logo-compact.png" alt="" className="h-14 w-14 mb-3 rounded-xl opacity-90" />
+                <img src={`${import.meta.env.BASE_URL}logo-compact.png`} alt="" className="h-14 w-14 mb-3 rounded-xl opacity-90" />
                 <p className="text-sm font-semibold text-white">No results found</p>
                 <p className="text-xs text-white/55 mt-1 mb-5">Nothing matches "{searchQuery}". Try another title.</p>
                 {trending.length > 0 && (

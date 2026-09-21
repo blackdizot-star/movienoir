@@ -214,7 +214,7 @@ const MoviePlayer = ({
 
         {error && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-6 text-center bg-black">
-            <img src="/logo-compact.png" alt="MovieNoir" className="h-14 w-14 rounded-xl" />
+            <img src={`${import.meta.env.BASE_URL}logo-compact.png`} alt="MovieNoir" className="h-14 w-14 rounded-xl" />
             <p className="text-white text-sm font-semibold tracking-wide">Stream unavailable</p>
             <p className="text-white/55 text-[10.5px] max-w-xs leading-relaxed">
               Try another source below.

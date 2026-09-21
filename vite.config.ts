@@ -4,7 +4,11 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  const base = process.env.GITHUB_ACTIONS ? "/dark-film-studio/" : "/";
+
+  return {
+  base,
   server: {
     host: "::",
     port: 8080,
@@ -47,13 +51,13 @@ export default defineConfig(({ mode }) => ({
         background_color: "#0D0D0D",
         display: "standalone",
         orientation: "portrait",
-        scope: "/",
-        start_url: "/",
+        scope: base,
+        start_url: base,
         categories: ["entertainment", "video"],
         icons: [
-          { src: "/pwa-192x192.png", sizes: "192x192", type: "image/png" },
-          { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png" },
-          { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+          { src: `${base}pwa-192x192.png`, sizes: "192x192", type: "image/png" },
+          { src: `${base}pwa-512x512.png`, sizes: "512x512", type: "image/png" },
+          { src: `${base}pwa-512x512.png`, sizes: "512x512", type: "image/png", purpose: "any maskable" },
         ],
       },
     }),
@@ -63,4 +67,5 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-}));
+  };
+});

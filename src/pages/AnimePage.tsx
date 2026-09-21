@@ -14,7 +14,7 @@ const AnimePage = () => {
       <ResponsiveScriptAd className="border-b border-border/40 bg-background" />
       <main className="grid min-h-[70vh] place-items-center px-5 py-24">
         <div className="w-full max-w-sm rounded-md border border-border bg-card p-6 text-center shadow-2xl">
-          <img src="/logo-compact.png" alt="MovieNoir" className="mx-auto h-12 w-12" />
+          <img src={`${import.meta.env.BASE_URL}logo-compact.png`} alt="MovieNoir" className="mx-auto h-12 w-12" />
           <h1 className="mt-4 text-3xl text-foreground">Watch anime on NowAnime</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             MovieNoir has moved its anime collection to the dedicated NowAnime site.

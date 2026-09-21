@@ -16,7 +16,7 @@ const PlayerBrandLoader = ({ variant = "loading", label }: Props) => {
       style={{ background: "#0A0A0A" }}
     >
       <img
-        src="/logo-compact.png"
+        src={`${import.meta.env.BASE_URL}logo-compact.png`}
         alt="MovieNoir"
         className={`h-14 w-14 rounded-xl drop-shadow-[0_0_24px_rgba(255,45,143,0.55)] ${bouncing ? "animate-bounce" : ""}`}
       />

@@ -52,7 +52,7 @@ const AppSplashScreen = () => {
 
       <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-4 px-6 text-center">
         <img
-          src="/logo-compact.png"
+          src={`${import.meta.env.BASE_URL}logo-compact.png`}
           alt="MovieNoir"
           className="h-16 w-16 rounded-2xl object-contain shadow-[0_0_28px_rgba(255,45,143,0.45)] animate-[bounce_1.2s_ease-in-out_infinite]"
         />
