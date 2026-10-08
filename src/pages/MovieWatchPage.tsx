@@ -6,6 +6,7 @@ import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
 import NativeAd from "@/components/NativeAd";
 import ResponsiveScriptAd from "@/components/ResponsiveScriptAd";
+import ScaledBannerAd from "@/components/ScaledBannerAd";
 
 
 import TmdbRow from "@/components/TmdbRow";
@@ -53,7 +54,7 @@ const MovieWatchPage = () => {
         description={data?.overview?.slice(0, 160) || "Stream movies in HD on MovieNoir."}
         type="video.movie"
       />
-      <div className="flex-1 max-w-[1180px] mx-auto w-full">
+      <div className="flex-1 max-w-[1480px] mx-auto w-full">
         <header className="sticky top-0 z-30 flex items-center gap-3 px-3 h-11 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
           <Link to={tmdbId ? `/movie/${tmdbId}` : "/home"} className="p-1.5 -ml-1 rounded-full hover:bg-white/10">
             <ArrowLeft className="w-4 h-4 text-white" />
@@ -61,10 +62,25 @@ const MovieWatchPage = () => {
           <h1 className="text-[13px] font-semibold text-white truncate">{data?.title || "Watch"}</h1>
         </header>
 
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6 lg:px-4 lg:pt-3">
+        <div className="lg:grid lg:grid-cols-[190px_minmax(0,1fr)_300px] lg:gap-6 lg:px-4 lg:pt-5 max-w-[1480px] mx-auto">
+          <aside className="hidden lg:block min-w-0">
+            <div className="sticky top-16">
+              <p className="mb-2 text-[9px] uppercase text-muted-foreground">Sponsored</p>
+              <div className="space-y-3 overflow-hidden">
+                <NativeAd height={180} desktopHeight={240} />
+                <ScaledBannerAd unit="rect" width={190} />
+                <NativeAd height={180} desktopHeight={240} />
+                <ScaledBannerAd unit="rect" width={190} />
+                <NativeAd height={180} desktopHeight={240} />
+                <ScaledBannerAd unit="rect" width={190} />
+              </div>
+            </div>
+          </aside>
           <div className="min-w-0">
+            <div className="px-3 pt-2 pb-1 lg:hidden">
+              <ResponsiveScriptAd className="!p-0" />
+            </div>
             <div className="w-full md:max-w-2xl md:mx-auto lg:max-w-[820px] lg:mx-0">
-              <ResponsiveScriptAd className="border-b border-border/40" />
               <MoviePlayer
                 tmdbId={tmdbId || ""}
                 type="movie"
@@ -89,7 +105,7 @@ const MovieWatchPage = () => {
                   </p>
                 </div>
 
-                <NativeAd compact height={110} desktopHeight={160} className="!px-0 !my-3" />
+                <div className="mt-3 -mx-4 lg:mx-0"><InlineAdRow count={4} /></div>
 
                 {/* Mobile/tablet: horizontal suggestions. Desktop shows list in sidebar. */}
                 <section className="mt-4 lg:hidden">
@@ -104,7 +120,7 @@ const MovieWatchPage = () => {
                         {(m.backdrop_path || m.poster_path) && (
                           <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.title} loading="lazy" className="w-full h-full object-cover" />
                         )}
-                        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[#FF2D8F]">
+                        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[#7517FF]">
                           <Play className="w-2.5 h-2.5 text-white fill-white" />
                         </span>
                       </Link>
@@ -152,8 +168,9 @@ const MovieWatchPage = () => {
           </div>
 
           {/* Desktop sidebar — YouTube-style suggestions column */}
-          <aside className="hidden lg:block w-[320px] shrink-0 pt-1">
+          <aside className="hidden lg:block w-[300px] shrink-0 pt-1">
             <div className="sticky top-14 space-y-4">
+              <div className="overflow-hidden"><ScaledBannerAd unit="banner" width={300} /></div>
               <div>
                 <h3 className="text-[13px] font-semibold text-white mb-2">Up Next</h3>
                 <div className="space-y-2">
@@ -167,12 +184,12 @@ const MovieWatchPage = () => {
                         {(m.backdrop_path || m.poster_path) && (
                           <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.title} loading="lazy" className="w-full h-full object-cover" />
                         )}
-                        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[#FF2D8F] opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[#7517FF] opacity-0 group-hover:opacity-100 transition-opacity">
                           <Play className="w-2.5 h-2.5 text-white fill-white" />
                         </span>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[12px] font-semibold text-white leading-snug line-clamp-2 group-hover:text-[#FF2D8F]">
+                        <p className="text-[12px] font-semibold text-white leading-snug line-clamp-2 group-hover:text-[#7517FF]">
                           {m.title}
                         </p>
                         <p className="text-[10px] text-white/50 mt-1">

@@ -6,6 +6,7 @@ import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
 import NativeAd from "@/components/NativeAd";
 import ResponsiveScriptAd from "@/components/ResponsiveScriptAd";
+import ScaledBannerAd from "@/components/ScaledBannerAd";
 
 import TmdbRow from "@/components/TmdbRow";
 import Footer from "@/components/Footer";
@@ -53,7 +54,7 @@ const TvWatchPage = () => {
         description={data?.overview?.slice(0, 160) || "Stream TV episodes in HD on MovieNoir."}
         type="video.episode"
       />
-      <div className="flex-1 max-w-[1180px] mx-auto w-full">
+      <div className="flex-1 max-w-[1480px] mx-auto w-full">
         <header className="sticky top-0 z-30 flex items-center gap-3 px-3 h-11 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
           <Link to={tmdbId ? `/tv/${tmdbId}` : "/home"} className="p-1.5 -ml-1 rounded-full hover:bg-white/10">
             <ArrowLeft className="w-4 h-4 text-white" />
@@ -63,10 +64,25 @@ const TvWatchPage = () => {
           </h1>
         </header>
 
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6 lg:px-4 lg:pt-3">
+        <div className="lg:grid lg:grid-cols-[190px_minmax(0,1fr)_300px] lg:gap-6 lg:px-4 lg:pt-5 max-w-[1480px] mx-auto">
+          <aside className="hidden lg:block min-w-0">
+            <div className="sticky top-16">
+              <p className="mb-2 text-[9px] uppercase text-muted-foreground">Sponsored</p>
+              <div className="space-y-3 overflow-hidden">
+                <NativeAd height={180} desktopHeight={240} />
+                <ScaledBannerAd unit="rect" width={190} />
+                <NativeAd height={180} desktopHeight={240} />
+                <ScaledBannerAd unit="rect" width={190} />
+                <NativeAd height={180} desktopHeight={240} />
+                <ScaledBannerAd unit="rect" width={190} />
+              </div>
+            </div>
+          </aside>
           <div className="min-w-0">
+            <div className="px-3 pt-2 pb-1 lg:hidden">
+              <ResponsiveScriptAd className="!p-0" />
+            </div>
             <div className="w-full md:max-w-2xl md:mx-auto lg:max-w-[820px] lg:mx-0">
-              <ResponsiveScriptAd className="border-b border-border/40" />
               {(() => {
                 const eps = seasonQuery.data?.episodes || [];
                 const nextEp = eps.find((e: any) => e.episode_number === episodeNum + 1);
@@ -117,7 +133,7 @@ const TvWatchPage = () => {
                   )}
                 </div>
 
-                <NativeAd compact height={110} desktopHeight={160} className="!px-0 !my-3" />
+                <div className="mt-3 -mx-4 lg:mx-0"><InlineAdRow count={4} /></div>
 
                 {/* Mobile/tablet: horizontal episode strip. Desktop uses sidebar list. */}
                 <section className="mt-4 lg:hidden">
@@ -140,7 +156,7 @@ const TvWatchPage = () => {
                               )}
                               <span className="absolute top-1 left-1 text-[9px] font-extrabold text-white">E{ep.episode_number}</span>
                               {isPlaying && (
-                                <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[#FF2D8F]">
+                                <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[#7517FF]">
                                   <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                                 </span>
                               )}
@@ -223,7 +239,7 @@ const TvWatchPage = () => {
                               ref={isPlaying ? activeEpRef : undefined}
                               key={ep.id}
                               to={`/watch/tv/${data!.id}/${activeSeason}/${ep.episode_number}`}
-                              className={`flex gap-2 p-1.5 rounded-lg group ${isPlaying ? "bg-[#FF2D8F]/15 border border-[#FF2D8F]/40" : "hover:bg-white/5 border border-transparent"}`}
+                              className={`flex gap-2 p-1.5 rounded-lg group ${isPlaying ? "bg-[#7517FF]/15 border border-[#7517FF]/40" : "hover:bg-white/5 border border-transparent"}`}
                             >
                               <div className="relative w-[140px] aspect-video rounded-md overflow-hidden bg-white/5 shrink-0">
                                 {ep.still_path && (
@@ -231,13 +247,13 @@ const TvWatchPage = () => {
                                 )}
                                 <span className="absolute top-1 left-1 text-[9px] font-extrabold text-white bg-black/60 px-1 rounded">E{ep.episode_number}</span>
                                 {isPlaying && (
-                                  <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[#FF2D8F]">
+                                  <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[#7517FF]">
                                     <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                                   </span>
                                 )}
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className={`text-[12px] font-semibold leading-snug line-clamp-2 ${isPlaying ? "text-[#FF2D8F]" : "text-white group-hover:text-[#FF2D8F]"}`}>
+                                <p className={`text-[12px] font-semibold leading-snug line-clamp-2 ${isPlaying ? "text-[#7517FF]" : "text-white group-hover:text-[#7517FF]"}`}>
                                   {ep.name || `Episode ${ep.episode_number}`}
                                 </p>
                                 <p className="text-[10px] text-white/50 mt-0.5">
