@@ -67,7 +67,7 @@ const MoviePlayer = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [internalServer, setInternalServer] = useState<ServerId>("vidbolt");
+  const [internalServer, setInternalServer] = useState<ServerId>("cinesrc");
   const server = serverId ?? internalServer;
   const containerRef = useRef<HTMLDivElement>(null);
   const online = useOnlineStatus();
@@ -91,7 +91,7 @@ const MoviePlayer = ({
       else await navigator.clipboard.writeText(url);
     } catch { /* ignore */ }
   };
-  const goDownload = () => { window.location.href = `/download?type=${type}&id=${tmdbId}${type === "tv" ? `&s=${season}&e=${episode}` : ""}`; };
+  const goDownload = () => { window.location.href = `/download/${type}/${tmdbId}${type === "tv" ? `/${season}/${episode}` : ""}`; };
   const src = embedUrl(server, tmdbId, type, season, episode);
 
   const pickServer = (id: ServerId) => {
