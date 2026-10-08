@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
 import PlayerBrandLoader from "@/components/PlayerBrandLoader";
-import PreRollAd from "@/components/PreRollAd";
 import { isInMyList, toggleMyList } from "@/hooks/useMyList";
 
 export type ServerId =
@@ -15,21 +14,22 @@ type ServerDef = {
   id: ServerId; label: string; protected?: boolean;
   url: (id: string, type: "movie" | "tv", s: number, e: number) => string;
 };
-const path = (origin: string) => (id: string, type: "movie" | "tv", s: number, e: number) =>
-  type === "tv" ? `${origin}/tv/${id}/${s}/${e}` : `${origin}/movie/${id}`;
+const q = "?theme=9b5cff";
+const path = (origin: string, theme = true) => (id: string, type: "movie" | "tv", s: number, e: number) =>
+  (type === "tv" ? `${origin}/tv/${id}/${s}/${e}` : `${origin}/movie/${id}`) + (theme ? q : "");
 
 export const PLAYER_SERVERS: ServerDef[] = [
-  { id: "cinesrc", label: "CineSrc (Protected)", protected: true, url: path("https://cinesrc.st") },
-  { id: "nova", label: "Nova (Protected)", protected: true, url: path("https://vidsrc.cc/v2/embed") },
-  { id: "vale", label: "Vale (Protected)", protected: true, url: path("https://vidgod.site") },
+  { id: "cinesrc", label: "CineSrc (Protected)", protected: true, url: path("https://cinesrc.st/embed") },
+  { id: "nova", label: "Nova (Protected)", protected: true, url: path("https://moviesapi.to") },
+  { id: "vale", label: "Vale (Protected)", protected: true, url: path("https://vidzen.fun") },
   { id: "smashystreams", label: "SmashyStreams (Protected)", protected: true,
-    url: (id, t, s, e) => t === "tv" ? `https://player.smashy.stream/tv/${id}?s=${s}&e=${e}` : `https://player.smashy.stream/movie/${id}` },
-  { id: "dumpo", label: "Dumpo (Protected)", protected: true, url: path("https://vidsrc.to/embed") },
+    url: (id, t, s, e) => t === "tv" ? `https://embed.smashystream.com/tv/${id}?s=${s}&e=${e}` : `https://embed.smashystream.com/movie/${id}` },
+  { id: "dumpo", label: "Dumpo (Protected)", protected: true, url: path("https://dulo.mov/watch", false) },
   { id: "vidbolt", label: "VidBolt", url: path("https://vidbolt.xyz") },
   { id: "vidcore", label: "Crimson", url: path("https://vidcore.io") },
   { id: "vidnest", label: "Helix", url: path("https://vidnest.fun") },
   { id: "vidlink", label: "Astra", url: path("https://vidlink.pro") },
-  { id: "vidsrcme", label: "Ironclad", url: path("https://vidsrcme.ru") },
+  { id: "vidsrcme", label: "Ironclad", url: path("https://vidsrcme.ru/embed") },
   { id: "filmu", label: "Lumen", url: path("https://embed.filmu.in") },
 ];
 
@@ -72,13 +72,12 @@ const MoviePlayer = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
-  const [adDone, setAdDone] = useState(false);
+  const adDone = true;
   const watchlistId = `${type}-${tmdbId}`;
   const [noAds, setNoAds] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(() => isInMyList(watchlistId));
 
   useEffect(() => {
-    setAdDone(false);
     setInWatchlist(isInMyList(`${type}-${tmdbId}`));
   }, [tmdbId, type, season, episode]);
 
@@ -204,8 +203,8 @@ const MoviePlayer = ({
             src={src}
             title={title || "Player"}
             className="absolute inset-0 w-full h-full border-0 bg-black"
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-            {...(sandboxed ? { sandbox: "allow-scripts allow-same-origin allow-forms allow-presentation" } : {})}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            {...(sandboxed ? { sandbox: "allow-scripts allow-same-origin allow-forms allow-presentation allow-storage-access-by-user-activation" } : {})}
             allowFullScreen
             referrerPolicy="origin"
             onLoad={() => setLoading(false)}
@@ -213,7 +212,6 @@ const MoviePlayer = ({
           />
         )}
 
-        {!adDone && <PreRollAd seed={`${type}-${tmdbId}-${season}-${episode}`} onFinish={() => setAdDone(true)} />}
 
         {adDone && loading && !error && <PlayerBrandLoader variant="loading" label="Loading stream…" />}
 
