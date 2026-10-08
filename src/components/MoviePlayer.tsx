@@ -1,47 +1,40 @@
 import { useState, useEffect, useRef } from "react";
-import { RefreshCw, Expand, WifiOff, CloudDownload, Bookmark, BookmarkCheck } from "lucide-react";
+import { RefreshCw, Maximize, WifiOff, CloudDownload, Plus, Check, Download, Share2, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
-import DownloadButton from "@/components/DownloadButton";
 import PlayerBrandLoader from "@/components/PlayerBrandLoader";
 import PreRollAd from "@/components/PreRollAd";
 import { isInMyList, toggleMyList } from "@/hooks/useMyList";
 
 export type ServerId =
-  | "vidbolt"
-  | "cinesrc"
-  | "vidcore"
-  | "vidnest"
-  | "vidlink"
-  | "vidsrcme"
-  | "vidgod"
-  | "filmu";
+  | "cinesrc" | "nova" | "vale" | "smashystreams" | "dumpo"
+  | "vidbolt" | "vidcore" | "vidnest" | "vidlink" | "vidsrcme" | "filmu";
 
-export const PLAYER_SERVERS: { id: ServerId; label: string; origin: string }[] = [
-  { id: "vidbolt", label: "VidBolt", origin: "https://vidbolt.xyz" },
-  { id: "cinesrc", label: "Nova", origin: "https://cinesrc.st" },
-  { id: "vidcore", label: "Crimson", origin: "https://vidcore.io" },
-  { id: "vidnest", label: "Helix", origin: "https://vidnest.fun" },
-  { id: "vidlink", label: "Astra", origin: "https://vidlink.pro" },
-  { id: "vidsrcme", label: "Ironclad", origin: "https://vidsrcme.ru" },
-  { id: "vidgod", label: "Vale", origin: "https://vidgod.site" },
-  { id: "filmu", label: "Lumen", origin: "https://embed.filmu.in" },
+type ServerDef = {
+  id: ServerId; label: string; protected?: boolean;
+  url: (id: string, type: "movie" | "tv", s: number, e: number) => string;
+};
+const path = (origin: string) => (id: string, type: "movie" | "tv", s: number, e: number) =>
+  type === "tv" ? `${origin}/tv/${id}/${s}/${e}` : `${origin}/movie/${id}`;
+
+export const PLAYER_SERVERS: ServerDef[] = [
+  { id: "cinesrc", label: "CineSrc (Protected)", protected: true, url: path("https://cinesrc.st") },
+  { id: "nova", label: "Nova (Protected)", protected: true, url: path("https://vidsrc.cc/v2/embed") },
+  { id: "vale", label: "Vale (Protected)", protected: true, url: path("https://vidgod.site") },
+  { id: "smashystreams", label: "SmashyStreams (Protected)", protected: true,
+    url: (id, t, s, e) => t === "tv" ? `https://player.smashy.stream/tv/${id}?s=${s}&e=${e}` : `https://player.smashy.stream/movie/${id}` },
+  { id: "dumpo", label: "Dumpo (Protected)", protected: true, url: path("https://vidsrc.to/embed") },
+  { id: "vidbolt", label: "VidBolt", url: path("https://vidbolt.xyz") },
+  { id: "vidcore", label: "Crimson", url: path("https://vidcore.io") },
+  { id: "vidnest", label: "Helix", url: path("https://vidnest.fun") },
+  { id: "vidlink", label: "Astra", url: path("https://vidlink.pro") },
+  { id: "vidsrcme", label: "Ironclad", url: path("https://vidsrcme.ru") },
+  { id: "filmu", label: "Lumen", url: path("https://embed.filmu.in") },
 ];
 
-const embedUrl = (
-  server: ServerId,
-  tmdbId: string,
-  type: "movie" | "tv",
-  season: number,
-  episode: number,
-): string => {
-  const origin =
-    PLAYER_SERVERS.find((s) => s.id === server)?.origin || PLAYER_SERVERS[0].origin;
-  return type === "tv"
-    ? `${origin}/tv/${tmdbId}/${season}/${episode}`
-    : `${origin}/movie/${tmdbId}`;
-};
+const embedUrl = (server: ServerId, tmdbId: string, type: "movie" | "tv", season: number, episode: number) =>
+  (PLAYER_SERVERS.find((s) => s.id === server) || PLAYER_SERVERS[0]).url(tmdbId, type, season, episode);
 
 interface Props {
   tmdbId: string;
@@ -81,6 +74,7 @@ const MoviePlayer = ({
   const [savedOffline, setSavedOffline] = useState(false);
   const [adDone, setAdDone] = useState(false);
   const watchlistId = `${type}-${tmdbId}`;
+  const [noAds, setNoAds] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(() => isInMyList(watchlistId));
 
   useEffect(() => {
@@ -88,6 +82,16 @@ const MoviePlayer = ({
     setInWatchlist(isInMyList(`${type}-${tmdbId}`));
   }, [tmdbId, type, season, episode]);
 
+  const isProtected = !!PLAYER_SERVERS.find((x) => x.id === server)?.protected;
+  const sandboxed = noAds || isProtected;
+  const share = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) await navigator.share({ title: title || "Watch", url });
+      else await navigator.clipboard.writeText(url);
+    } catch { /* ignore */ }
+  };
+  const goDownload = () => { window.location.href = `/download?type=${type}&id=${tmdbId}${type === "tv" ? `&s=${season}&e=${episode}` : ""}`; };
   const src = embedUrl(server, tmdbId, type, season, episode);
 
   const pickServer = (id: ServerId) => {
@@ -199,8 +203,9 @@ const MoviePlayer = ({
             key={`${src}-${attempt}`}
             src={src}
             title={title || "Player"}
-            className="absolute inset-0 w-full h-full border-0"
-            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            className="absolute inset-0 w-full h-full border-0 bg-black"
+            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            {...(sandboxed ? { sandbox: "allow-scripts allow-same-origin allow-forms allow-presentation" } : {})}
             allowFullScreen
             referrerPolicy="origin"
             onLoad={() => setLoading(false)}
@@ -229,55 +234,49 @@ const MoviePlayer = ({
         )}
       </div>
 
-      <div className="flex items-center gap-1.5 border-t border-border/60 bg-background px-3 py-2">
-        <label htmlFor={`source-${tmdbId}`} className="sr-only">Stream source</label>
-        <select
-          id={`source-${tmdbId}`}
-          value={server}
-          onChange={(event) => pickServer(event.target.value as ServerId)}
-          className="h-8 min-w-0 flex-1 rounded-md border border-border bg-card px-2 text-xs font-semibold text-foreground outline-none focus:ring-1 focus:ring-primary sm:max-w-40"
-          aria-label="Stream source"
-        >
-          {PLAYER_SERVERS.map((source) => (
-            <option key={source.id} value={source.id}>{source.label}</option>
-          ))}
-        </select>
-
-        <div className="ml-auto flex shrink-0 items-center gap-1.5">
-          {title && (
-            <>
-              <button
-                type="button"
-                onClick={toggleWatchlist}
-                title={inWatchlist ? "Remove from watchlist" : "Add to watchlist"}
-                aria-label={inWatchlist ? "Remove from watchlist" : "Add to watchlist"}
-                className="grid h-8 w-8 place-items-center rounded-md border border-border/60 text-foreground hover:bg-foreground/10"
-              >
-                {inWatchlist ? <BookmarkCheck className="h-4 w-4 text-primary" /> : <Bookmark className="h-4 w-4" />}
-              </button>
-              <DownloadButton
-                size="icon"
-                type={type}
-                tmdbId={tmdbId}
-                title={title}
-                year={year}
-                poster={poster}
-                backdrop={backdrop}
-                season={type === "tv" ? season : undefined}
-                episode={type === "tv" ? episode : undefined}
-              />
-            </>
-          )}
-          <button
-            onClick={toggleFullscreen}
-            title="Fullscreen (F)"
-            aria-label="Fullscreen"
-            className="grid place-items-center h-7 w-7 rounded-md text-foreground hover:bg-foreground/10 border border-border/60"
+      <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 bg-card border-t border-border/60 flex-nowrap overflow-x-auto scrollbar-hide">
+        <div className="relative shrink-0">
+          <label className="sr-only" htmlFor="bb-server-select">Server</label>
+          <select
+            id="bb-server-select"
+            value={server}
+            onChange={(event) => pickServer(event.target.value as ServerId)}
+            className="h-9 max-w-[120px] sm:max-w-none appearance-none rounded-md border border-border/60 bg-foreground/5 pl-2 sm:pl-3 pr-7 sm:pr-8 text-[12px] font-semibold text-foreground"
           >
-            <Expand className="w-3.5 h-3.5" />
+            {PLAYER_SERVERS.map((source) => (
+              <option key={source.id} value={source.id} className="bg-background text-foreground">{source.label}</option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/70" />
+        </div>
+        <button
+          type="button"
+          aria-pressed={noAds}
+          onClick={() => setNoAds((v) => !v)}
+          className={`h-8 shrink-0 whitespace-nowrap rounded-full px-2.5 sm:px-3 text-[11px] font-semibold transition ${noAds ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary ring-1 ring-primary/50 animate-pulse shadow-[0_0_14px_hsl(var(--primary)/0.7)]"}`}
+        >
+          {noAds ? "Ads off" : "Turn off ads"}
+        </button>
+        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5">
+          <button type="button" title="Download" aria-label="Download" onClick={goDownload} className="group flex shrink-0 flex-row items-center text-[10px] font-medium text-muted-foreground transition active:scale-95 sm:w-auto sm:h-9 sm:flex-row sm:gap-1.5 sm:rounded-full sm:bg-secondary sm:px-3 sm:text-[12px] sm:font-semibold sm:text-foreground sm:ring-1 sm:ring-border/60 sm:hover:bg-primary sm:hover:text-primary-foreground sm:hover:ring-primary">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30 group-active:bg-primary group-active:text-primary-foreground sm:h-auto sm:w-auto sm:rounded-none sm:bg-transparent sm:text-current sm:ring-0"><Download className="h-4 w-4" /></span>
+            <span className="hidden sm:inline">Download</span>
+          </button>
+          <button type="button" title="Full screen" aria-label="Full screen" onClick={toggleFullscreen} className="group flex shrink-0 flex-row items-center text-[10px] font-medium text-muted-foreground transition active:scale-95 sm:w-auto sm:h-9 sm:flex-row sm:gap-1.5 sm:rounded-full sm:bg-secondary sm:px-3 sm:text-[12px] sm:font-semibold sm:text-foreground sm:ring-1 sm:ring-border/60 sm:hover:bg-primary sm:hover:text-primary-foreground sm:hover:ring-primary">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30 group-active:bg-primary group-active:text-primary-foreground sm:h-auto sm:w-auto sm:rounded-none sm:bg-transparent sm:text-current sm:ring-0"><Maximize className="h-4 w-4" /></span>
+            <span className="hidden sm:inline">Fullscreen</span>
+          </button>
+          <button type="button" title="Share" aria-label="Share" onClick={share} className="group flex shrink-0 flex-row items-center text-[10px] font-medium text-muted-foreground transition active:scale-95 sm:w-auto sm:h-9 sm:flex-row sm:gap-1.5 sm:rounded-full sm:bg-secondary sm:px-3 sm:text-[12px] sm:font-semibold sm:text-foreground sm:ring-1 sm:ring-border/60 sm:hover:bg-primary sm:hover:text-primary-foreground sm:hover:ring-primary">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30 group-active:bg-primary group-active:text-primary-foreground sm:h-auto sm:w-auto sm:rounded-none sm:bg-transparent sm:text-current sm:ring-0"><Share2 className="h-4 w-4" /></span>
+            <span className="hidden sm:inline">Share</span>
+          </button>
+          <button type="button" title={inWatchlist ? "Remove from watchlist" : "Add to watchlist"} aria-label={inWatchlist ? "Remove from watchlist" : "Add to watchlist"} onClick={toggleWatchlist} className="group flex shrink-0 flex-row items-center text-[10px] font-medium text-muted-foreground transition active:scale-95 sm:w-auto sm:h-9 sm:flex-row sm:gap-1.5 sm:rounded-full sm:bg-secondary sm:px-3 sm:text-[12px] sm:font-semibold sm:text-foreground sm:ring-1 sm:ring-border/60 sm:hover:bg-primary sm:hover:text-primary-foreground sm:hover:ring-primary">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30 group-active:bg-primary group-active:text-primary-foreground sm:h-auto sm:w-auto sm:rounded-none sm:bg-transparent sm:text-current sm:ring-0">{inWatchlist ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}</span>
+            <span className="hidden sm:inline">Watchlist</span>
           </button>
         </div>
       </div>
+      <p className="px-3 pb-2 bg-card text-[10.5px] leading-snug text-muted-foreground">For no redirects, turn on "Turn off ads". If the video doesn't play, turn it off to keep enjoying your show.</p>
     </div>
   );
 };
