@@ -4,6 +4,7 @@ import { Search, ArrowLeft, Loader2, Flame, Star, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
+import TmdbCard from "@/components/TmdbCard";
 
 import NativeAd from "@/components/NativeAd";
 import ResponsiveScriptAd from "@/components/ResponsiveScriptAd";
@@ -331,12 +332,12 @@ const SearchPage = () => {
               <BrandedLoadingState label="Loading trending" />
             ) : (
               <>
-                <div className="grid grid-cols-4 gap-1.5 pb-4 sm:grid-cols-4 sm:gap-2 md:grid-cols-5 lg:grid-cols-6">
+                <div className="grid grid-cols-4 gap-x-1.5 gap-y-3 pb-4 sm:grid-cols-5 sm:gap-2 md:grid-cols-6 lg:grid-cols-8">
                   {(results as ResultItem[]).slice(0, 24).map((m, i) => (
                     <div key={`sg-${m._type}-${m.id}`} className="contents">
-                      <ExploreCard item={m} onClick={() => openItem(m)} />
+                      <TmdbCard item={m} type={m._type} fill />
                       {(i + 1) % 8 === 0 && i < 23 && (
-                        <div className="col-span-4 -mx-3 my-1 sm:-mx-5 md:col-span-5 lg:col-span-6">
+                        <div className="col-span-4 -mx-3 my-1 sm:-mx-5 sm:col-span-5 md:col-span-6 lg:col-span-8">
                           <SponsoredLabel />
                           <NativeAd compact height={110} desktopHeight={160} />
                         </div>
@@ -390,12 +391,12 @@ const SearchPage = () => {
                 <p className="text-[10px] text-white/50 mb-2">
                   {filtered.length} result{filtered.length === 1 ? "" : "s"} for "{searchQuery}"
                 </p>
-                <div className="grid grid-cols-4 gap-1.5 pb-4 sm:grid-cols-4 sm:gap-2 md:grid-cols-5 lg:grid-cols-6">
+                <div className="grid grid-cols-4 gap-x-1.5 gap-y-3 pb-4 sm:grid-cols-5 sm:gap-2 md:grid-cols-6 lg:grid-cols-8">
                   {filtered.map((item, i) => (
                     <div key={`${item._type}-${item.id}`} className="contents">
-                      <ExploreCard item={item} onClick={() => openItem(item)} />
+                      <TmdbCard item={item} type={item._type} fill />
                       {(i + 1) % 8 === 0 && i < filtered.length - 1 && (
-                        <div className="col-span-4 -mx-3 my-1 sm:-mx-5 md:col-span-5 lg:col-span-6">
+                        <div className="col-span-4 -mx-3 my-1 sm:-mx-5 sm:col-span-5 md:col-span-6 lg:col-span-8">
                           <SponsoredLabel />
                           <NativeAd compact height={110} desktopHeight={160} />
                         </div>
