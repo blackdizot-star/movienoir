@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
  * Adsterra 300x250 iframe ad — medium rectangle, safe for both mobile and
  * desktop placement. Auto-rotates every 45s to keep impressions fresh.
  */
-const AD_KEY = "abc2c7fde6d68fc96757765c351d9dfc";
+const AD_KEY = "d191d80ff21bffdcf9fada4d1e7a8675";
 const AD_W = 300;
 const AD_H = 250;
 const ROTATE_MS = 45_000;
@@ -22,7 +22,7 @@ const buildSrcDoc = () => `<!doctype html>
     'params' : {}
   };
 <\/script>
-<script async data-cfasync="false" src="https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js"><\/script>
+<script src="https://bancadeltempoidea.org/22/${AD_KEY}"><\/script>
 </body></html>`;
 
 interface Props {

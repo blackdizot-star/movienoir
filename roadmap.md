@@ -7,3 +7,5 @@
 - [x] Insert native ads after every two Explore card rows
 - [x] Reduce the phone home hero to a proportional height and compact content
 - [x] Verify phone layouts, navigation, search, and build status
+- [x] Watch page: 3-column desktop layout from uploaded HTML, new ad codes (container, 300x250, 468x60)
+- [x] Player servers + Turn off ads/Download/Fullscreen/Share/Watchlist buttons on phone and desktop
