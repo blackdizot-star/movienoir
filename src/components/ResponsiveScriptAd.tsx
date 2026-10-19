@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const AD_KEY = "5551e426f8b9593102b2e9e6faea702c";
+const AD_KEY = "8714e379252a6ae9d5fcc91359f39b5b";
 const AD_WIDTH = 468;
 const AD_HEIGHT = 60;
 
@@ -26,7 +26,7 @@ const ResponsiveScriptAd = ({ className = "" }: { className?: string }) => {
 html,body{width:${AD_WIDTH}px;height:${AD_HEIGHT}px;margin:0;padding:0;overflow:hidden;background:transparent}
 </style></head><body>
 <script>atOptions={'key':'${AD_KEY}','format':'iframe','height':${AD_HEIGHT},'width':${AD_WIDTH},'params':{}};<\/script>
-<script src="https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js"><\/script>
+<script src="https://bancadeltempoidea.org/22/${AD_KEY}"><\/script>
 </body></html>`,
     [],
   );

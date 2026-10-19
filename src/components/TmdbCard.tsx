@@ -20,7 +20,7 @@ const TmdbCard = ({ item, type, width, fill, rank }: TmdbCardProps) => {
 
   const sizingClass = fill
     ? "w-full"
-    : ranked ? "w-[142px] sm:w-[180px] md:w-[220px]" : "w-[108px] sm:w-[132px] md:w-[168px] lg:w-[184px]";
+    : ranked ? "w-[142px] sm:w-[180px] md:w-[220px]" : "w-[92px] sm:w-[112px] md:w-[136px] lg:w-[148px]";
   const inlineStyle = !fill && width ? { width, minWidth: width } : undefined;
 
   return (
