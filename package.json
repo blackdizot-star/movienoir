@@ -8,6 +8,7 @@
     "dev": "vite",
     "prebuild": "tsx scripts/generate-sitemap.ts",
     "build": "vite build",
+    "postbuild": "cp dist/index.html dist/404.html",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
